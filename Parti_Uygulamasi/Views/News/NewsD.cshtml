@@ -1,0 +1,146 @@
+﻿@model List<Parti_Uygulamasi.Models.NewsAdditionModel>
+
+@{
+    ViewBag.Title = "Haber Sil";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*@{
+    int maxDisplayedPages = 3; 
+    int actualMaxPageNumber = Math.Min(ViewBag.MaxPageNumber, maxDisplayedPages);
+}*@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/css/styles.css" />
+    <script src="~/scripts/shared_functions.js"></script>
+</head>
+<body>
+    @Html.Partial("_ModalPartial")
+
+    <h1>Haberler</h1>
+    @* filtre*@
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="searchBox" class="form-label">Arama:</label>
+            <input type="text" class="form-control" id="searchBox" placeholder="Arama yapın...">
+        </div>
+        <div class="col-md-4">
+            <label for="startDate" class="form-label">Başlangıç Tarihi:</label>
+            <input type="date" class="form-control" id="startDate">
+        </div>
+        <div class="col-md-4">
+            <label for="endDate" class="form-label">Bitiş Tarihi:</label>
+            <input type="date" class="form-control" id="endDate">
+        </div>
+        <div class="col-md-12 mt-3">
+            <button class="btn btn-primary" id="searchButton">Bul</button>
+        </div>
+    </div>
+
+    @* haberler *@
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <ul class="list-group">
+                @foreach (var news in Model)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex flex-column">
+                            <div class="d-flex align-items-center mb-2">
+                                <input type="checkbox" class="form-check-input" id="checkbox-@news.Id">
+                                <label class="form-check-label" for="checkbox-@news.Id">
+                                    <strong>@news.Head</strong> - @news.Date.ToString("dd/MM/yyyy")
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-link text-center mb-2" onclick="showNewDetails('@news.Id')" data-bs-toggle="modal" data-bs-target="#modal-@news.Id">
+                                Haber Detayı
+                            </button>
+                        </div>
+                        <img src="~/images/sample.jpg" alt="Haber Fotoğrafı" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" />
+                    </li>
+                }
+            </ul>
+
+            <button type="button" class="btn btn-danger mt-3" id="deleteSelectedNewsBtn">Seçilenleri Sil</button>
+        </div>
+    </div>
+
+    @* pagination *@
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= ViewBag.MaxPageNumber; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPageNumber ? "active" : "")">
+                <a class="page-link" style="cursor:pointer;" onclick="searchButtonClicked(@i)">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+
+    @* silme butonu tıklandığında*@
+    <script>
+        document.getElementById('deleteSelectedNewsBtn').addEventListener('click', function () {
+            var selectedIds = [];
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(function (checkbox) {
+                selectedIds.push(checkbox.id.replace('checkbox-', ''));
+            });
+
+            if (selectedIds.length === 0) {
+                alert('Lütfen silmek istediğiniz haberleri seçin.');
+                return;
+            }
+
+            fetch('/News/DeleteNews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(selectedIds)
+            })
+                .then(response => response.text()) // Sunucudan dönen yönlendirme URL'sini al
+                .then(redirectUrl => {
+                    // Yönlendirme URL'sini kullanarak sayfayı yönlendir
+                    window.location.href = redirectUrl;
+                })
+                .catch(error => {
+                    // Hata oluştuysa kullanıcıya uyarı ver
+                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    console.error('Hata:', error);
+                });
+
+        });
+    </script>
+
+    @* bulma butonu tıklandığında *@
+    <script>
+        // Fonksiyon tanımlama
+        function searchButtonClicked(pageNumber = 1) {
+            // Arama kutularından değerleri al
+            var searchBoxValue = document.getElementById('searchBox').value;
+            var startDateValue = document.getElementById('startDate').value;
+            var endDateValue = document.getElementById('endDate').value;
+
+            // Controller aksiyonuna gitmek için URL oluştur
+            var url = '/News/NewsD?pageNumber=' + pageNumber + '&start_date=' + startDateValue + '&end_date=' + endDateValue + '&searchedText=' + searchBoxValue;
+
+            // Yönlendirme işlemi
+            window.location.href = url;
+        }
+
+        // Butona click event'ini ekleme
+        document.getElementById('searchButton').addEventListener('click', searchButtonClicked);
+    </script>
+
+   
+</body>
+</html>

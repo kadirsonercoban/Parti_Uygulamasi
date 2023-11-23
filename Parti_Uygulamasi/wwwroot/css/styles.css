@@ -1,0 +1,134 @@
+﻿/*navbar*/
+
+/* Navbar'ın yüksekliğini ayarla */
+.navbar {
+    height: 200px; /* Navbar yüksekliği */
+    background-color: #333; /* Navbar arka plan rengi */
+    position: fixed; /* Navbar'ı sabitle */
+    top: 0; /* Sayfanın en üstüne sabitle */
+    width: 100%; /* Sayfa genişliği kadar olacak şekilde ayarla */
+    display: flex; /* Flexbox kullanarak içeriğini yatay olarak düzenle */
+    align-items: center; /* İçeriği dikeyde ortala */
+    justify-content: space-between; /* İçeriği yatayda ortala ve aralarına boşluk bırak */
+    padding: 0 20px; /* İçeriği ve dış kenarı ayırma (sağ ve sol) */
+    z-index: 2
+}
+
+.navbar-nav {
+    flex: 1;
+    justify-content: space-around;
+}
+
+/* Logo yüksekliğini ve genişliğini ayarla */
+.main-logo img {
+    height: 180px; 
+    width: 180px; 
+   
+}
+
+/* Navbar menü öğelerini stilendir */
+.navbar-nav .nav-item .nav-link {
+    height: 100px; /* Menü öğesi yüksekliği */
+    color: black; /* Menü öğesi yazı rengi */
+    line-height: 100px; /* Metin dikey hizalama (ortala) */
+    text-align: center; /* Metin yatay hizalama (ortala) */
+}
+
+/* Navbar menü öğelerinin arka plan rengini ayarla */
+.navbar-nav .nav-item {
+    background-color: #ccc; /* Gri arka plan rengi */
+    margin: 0 5px; /* Kenar boşlukları */
+    border-radius: 5px; /* Köşe yuvarlatma */
+    line-height: 50px; /* Metnin dikey ortalaması (yükseklik) */
+    padding: 0 50px; /* İçeriği ve dış kenarı ayırma (sol ve sağ) */
+}
+
+/*middle section*//************************************************************************/
+
+body{
+    margin-top:200px;
+}
+
+.slide{
+    margin-top:200px;
+}
+
+
+
+.content {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 75px;
+    background-color: khaki;
+    padding: 0px 20px 20px;
+    text-align: center;
+    min-height: 500px;
+}
+
+.card {
+   
+    width: 300px;
+    height: 500px;
+    z-index: 1;
+}
+
+.card_text {
+    height: 10em; /* Örneğin, 2 satır gösterilsin, bu değeri ihtiyaca göre ayarlayabilirsiniz */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Gösterilmeyen metni temsil etmek için üç nokta ekler */
+    white-space: normal; /* Satır sonlarına gelindiğinde metni kırpar ve yeni satıra geçer */
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Kart içeriğini tam doldurmak için */
+}
+
+.card img {
+    filter: grayscale(100%); 
+    transition: filter 0.3s; 
+}
+
+.card:hover img {
+    filter: grayscale(0%); 
+}
+
+
+.del_update{
+    padding:20px;
+
+}
+/*footer*/ /*********************************************************************/
+.dark-footer {
+    width: 100%; /* Sayfa genişliği kadar olacak şekilde ayarla */
+    background-color: #332D2D; /* Dark temanın arka plan rengi */
+    color: #fff; /* Yazı rengi */
+    padding: 20px; /* İçeriği ve dış kenarı ayırma */
+    text-align: center; /* Metni ortala */
+    position: relative;
+}
+
+.kategori-listesi {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.kategori {
+    margin: 0 100px;
+}
+
+.kategori-baslik {
+    font-weight: bold;
+}
+
+.kategori-linkler a {
+    display: block;
+    margin-bottom: 10px;
+    color: white;
+    text-decoration: none;
+}

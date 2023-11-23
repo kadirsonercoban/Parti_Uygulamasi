@@ -1,0 +1,171 @@
+﻿@model Parti_Uygulamasi.Models.PartyWorkerModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Person Information</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/css/styles.css" />
+    <script src="~/scripts/shared_functions.js"></script>
+
+
+
+</head>
+<body>
+    &nbsp;&nbsp;
+    <div class="container mt-5">
+        <h2>Kişi Bilgileri</h2>
+        <div class="form-group" style="display:none">
+            <input type="text" class="form-control" name="id" id="id">
+        </div>
+        @using (Html.BeginForm("AddPartyWorker", "PartyWorkers", FormMethod.Post))
+        {
+            <div class="form-group">
+                <label for="Photo">Fotoğraf Seçin:</label>
+                <input type="file" class="form-control" name="Photo" id="Photo">
+            </div>
+            <div class="form-group" style="display:none;" id="updateImage">
+                <label>Fotoğraf:</label>
+                <img id="uploadedImage" src="/images//sample.jpg" alt="Yüklenen Fotoğraf" style="max-width: 200px; max-height: 200px;" />
+            </div>
+            <div class="form-group">
+                <label for="firstName">Ad*:</label>
+                <input type="text" class="form-control" title="ad boş bırakılmaz" name="FirstName" id="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Soyad*:</label>
+                <input type="text" class="form-control" title="soyad boş bırakılmaz" name="LastName" id="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="title">Ünvan:</label>
+                <input type="text" class="form-control" name="Title" id="title">
+            </div>
+            <div class="form-group">
+                <label for="city">Şehir/Görev Yeri:</label>
+                <input type="text" class="form-control" name="City" id="city">
+            </div>
+            <div class="form-group">
+                <label for="position">Pozisyon/Görev:</label>
+                <input type="text" class="form-control" name="Position" id="position">
+            </div>
+            <div class="form-group">
+                <label for="introduction">Tanıtım:</label>
+                <textarea class="form-control" name="Introduction" id="introduction" rows="5"></textarea>
+            </div>
+            <label for="contactInfo">İletişim Bilgileri:</label>
+            <div class="form-group">
+
+                <label for="phone">Telefon:</label>
+                <input type="text" class="form-control" name="Phone" id="Phone">
+                <label for="email">E-mail:</label>
+                <input type="text" class="form-control" name="Email" id="Email">
+                <label for="webpage">Web Sayfası:</label>
+                <input type="text" class="form-control" name="WebPage" id="WebPage">
+            </div>
+            <button type="submit" class="btn btn-primary" id="saveButton">Kaydet</button>
+
+        }
+        <button type="button" class="btn btn-warning" id="updateButton" style="display:none;">Güncelle</button>
+    </div>
+    &nbsp;&nbsp;
+    @* bilgileri listeleme sayfasından alıp çalışan güncellemesi yapar *@
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var fromUpdate = urlParams.get("fromUpdate");
+        var personId = urlParams.get("personId");
+
+        if (fromUpdate === "true") {
+            document.getElementById("saveButton").disabled = true;
+            var ui = document.getElementById("updateImage");
+            ui.style.display = "block";
+            var sb = document.getElementById("saveButton");
+            sb.style.display = "none";
+            var ub = document.getElementById("updateButton");
+            ub.style.display = "block";
+            getPersonInfo(personId, function (personInfo) {
+                console.log(personInfo);
+                var fname = document.getElementById('firstName');
+                fname.value = personInfo.FirstName;
+                var lname = document.getElementById('lastName');
+                lname.value = personInfo.LastName;
+                var title = document.getElementById('title');
+                title.value = personInfo.Title;
+                var city = document.getElementById('city');
+                city.value = personInfo.City;
+                var position = document.getElementById('position');
+                position.value = personInfo.Position;
+                var introduction = document.getElementById('introduction');
+                introduction.value = personInfo.Introduction;
+                var phone = document.getElementById('Phone');
+                phone.value = personInfo.Phone;
+                var email = document.getElementById('Email');
+                email.value = personInfo.Email;
+                var webPage = document.getElementById('WebPage');
+                webPage.value = personInfo.WebPage;
+
+                //foto ekleme bu şekilde olmayabilir foto alıp kaydetmeyi yaptıktan sonra bakılacak 
+                //var photo = document.getElementById('Photo');
+                //photo.value = personInfo.photo;
+
+                var updateButton = document.getElementById("updateButton");
+                updateButton.addEventListener("click", function () {
+                    var firstName = document.getElementById('firstName').value;
+                    console.log(firstName);
+                    var lastName = document.getElementById('lastName').value;
+                    var title = document.getElementById('title').value;
+                    var city = document.getElementById('city').value;
+                    var position = document.getElementById('position').value;
+                    var introduction = document.getElementById('introduction').value;
+                    var phone = document.getElementById('Phone').value;
+                    var email = document.getElementById('Email').value;
+                    var webPage = document.getElementById('WebPage').value;
+                    //var photo = document.getElementById('Photo').value;
+                    var photo = null;
+
+                    var personData = {
+                        Id: personInfo.Id,
+                        FirstName: firstName,
+                        LastName: lastName,
+                        Title: title,
+                        City: city,
+                        Position: position,
+                        Introduction: introduction,
+                        Phone: phone,
+                        Email: email,
+                        WebPage: webPage,
+                        Photo: null
+                    };
+
+                    $.ajax({
+                        url: '/PartyWorkers/UpdatePW',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(personData),
+                        success: function (response) {
+                            var url = "/PartyWorkers/List_PWorkers"
+                            window.location.href = url;
+                            console.log(response);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+
+
+
+
+                });
+            });
+           
+        }
+
+    </script>
+</body>
+</html>
+

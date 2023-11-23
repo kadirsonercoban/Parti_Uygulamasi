@@ -1,0 +1,125 @@
+﻿@model List<Parti_Uygulamasi.Models.PartyWorkerModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/css/styles.css" />
+    <script src="~/scripts/shared_functions.js"></script>
+
+
+
+
+</head>
+<body>
+    <div class="content">
+        @Html.Partial("_ModalPartial")
+        @*<input type="button" class="btn btn-secondary" value="Haber Paylaş" style="height:100px;width:150px" onclick="@("window.location.href='"+@Url.Action("NewsP","NewsPublishment")+"'");" />*@
+        <div class="container mt-5">
+            <button type="button" class="btn btn-danger mt-3" style="margin:20px; padding:20px" id="deleteSelectedWorkerBtn" onclick="deletePersons()">Seçilenleri Sil</button>
+            <div class="row">
+                @foreach (var pw in Model)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card" style="cursor: pointer;">
+                            <input type="checkbox" class="form-check-input" id="checkbox-@pw.Id">
+                            <img src="~/images/sample.jpg" class="card-img-top" alt="Baslik" onclick="showPersonDetails('@pw.Id')">
+                            <div class="card-body" onclick="showPersonDetails('@pw.Id')">
+                                <p class="card-text">@pw.Title</p>
+                                <h5 class="card-title">@pw.FirstName @pw.LastName</h5>
+                                <p class="card-text">@pw.City-@pw.Position</p>
+                                <p class="card-text">DETAY</p>
+                            </div>
+                            <div class="del_update">
+                                <button class="btn btn-danger" onclick="deletePerson('@pw.Id')">Sil</button>
+                                <button class="btn btn-primary" onclick="editPerson('@pw.Id')">Düzenle</button>
+                            </div>
+
+
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+@* çalışan kartlarına basıldığında detayları gösterir *@
+<script>
+    // Kartlara tıklanıldığında modalı açan fonksiyon
+    function showPersonDetails(id) {
+        // Ajax isteği yaparak kişi bilgilerini controller'dan al
+        $.ajax({
+            url: '/PartyWorkers/GetPartyWorkerDetails/' + id,
+            type: 'GET',
+            dataType: 'json', // Dönen verinin tipi, JSON olarak varsayılan olarak ayarlandı
+            success: function (data) {
+                // Controller'dan dönen veriyi kullanarak modal içeriği oluştur
+                var personDetails = `
+                <img src="/images/sample.jpg" alt="${data.firstName} ${data.lastName}" class="img-fluid mb-2">
+                <h5>${data.firstName} ${data.lastName}</h5>
+                <p>${data.city || ''}-${data.position || ''}</p>
+                <p>${data.introduction || ''}</p>
+                <p>Telefon: ${data.phone || ''}</p>
+                <p>E-posta: ${data.email || ''}</p>
+                <p>Web Sayfası: ${data.webPage ? `<a href="${data.webPage}" target="_blank">${data.webPage}</a>` : ''}</p>
+                `;
+
+                document.getElementById("modal-body").innerHTML = personDetails;
+                document.getElementById("exampleModalLabel").textContent = "Kişi Bilgileri";
+                $('#myModal').modal('show');
+            },
+            error: function () {
+                console.log("Bir hata oluştu");
+            }
+        });
+    }
+</script>
+
+@* tek çalışan silmek için *@
+<script>
+    function deletePerson(personId) {
+        var url = '/PartyWorkers/DeletePW?personId=' + personId;
+        window.location.href = url;
+    }
+
+</script>
+
+@* çalışan düzenlemek için *@
+<script>
+    function editPerson(personId) {
+        var url = '/PartyWorkers/Add_PWorkers?fromUpdate=true&personId=' + personId;
+        window.location.href = url;
+    }
+</script>
+
+@* çalışanları şeçilenleri sil butonuyla toplu silmek için *@
+<script>
+    function deletePersons() {
+        document.getElementById('deleteSelectedWorkerBtn').addEventListener('click', function () {
+            var selectedIds = [];
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(function (checkbox) {
+                selectedIds.push(checkbox.id.replace('checkbox-', ''));
+            });
+          
+            if (selectedIds.length === 0) {
+                alert('Lütfen silmek istediğiniz haberleri seçin.');
+                return;
+            }
+            console.log(selectedIds.length)
+            console.log(selectedIds);
+            selectedIds.forEach(function (personId) {
+                var url = '/PartyWorkers/DeletePW?personId=' + personId;
+                window.location.href = url;
+            });
+        });
+        
+    }
+</script>

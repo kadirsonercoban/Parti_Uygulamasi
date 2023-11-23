@@ -1,0 +1,47 @@
+﻿@model Parti_Uygulamasi.Models.NewsAdditionModel
+@{
+    ViewBag.Title = "Haber Ekle";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/css/styles.css" />
+    <script src="~/scripts/shared_functions.js"></script>
+</head>
+<body>
+   
+    &nbsp;&nbsp;
+    <div class="content">
+        <div class="container mt-5">
+            <h2>Haber Ekle</h2>
+            @using (Html.BeginForm("AddNews", "News", FormMethod.Post))
+            {
+                <div class="form-group">
+                    <label for="Photo">Fotoğraf Seçin*:</label>
+                    <input type="file" class="form-control" name="Photo">
+                </div>
+                <div class="form-group">
+                    <label for="Head">Haber Başlığı*:</label>
+                    <input type="text" class="form-control" name="Head">
+                </div>
+                <div class="form-group">
+                    <label for="Content">Haber İçeriği*:</label>
+                    <textarea class="form-control" name="Content" rows="5"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            }
+
+        </div>
+        &nbsp;&nbsp;
+    </div>
+</body>
+</html>
